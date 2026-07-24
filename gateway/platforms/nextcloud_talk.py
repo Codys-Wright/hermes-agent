@@ -303,7 +303,7 @@ class NextcloudTalkAdapter(BasePlatformAdapter):
     # Required overrides
     # ------------------------------------------------------------------
 
-    async def connect(self) -> bool:
+    async def connect(self, *, is_reconnect: bool = False) -> bool:
         """Start webhook server and optionally create team room."""
         import aiohttp
         from aiohttp import web

@@ -2011,6 +2011,8 @@ def setup_gateway(config: dict):
             get_env_value("QQBOT_HOME_CHANNEL") or get_env_value("QQ_HOME_CHANNEL")
         ):
             missing_home.append("QQBot")
+        if get_env_value("NEXTCLOUD_TALK_BOT_SECRET") and not get_env_value("NEXTCLOUD_TALK_HOME_CHANNEL"):
+            missing_home.append("Nextcloud Talk")
 
         if missing_home:
             print()

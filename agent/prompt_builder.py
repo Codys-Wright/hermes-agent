@@ -831,6 +831,12 @@ PLATFORM_HINTS = {
         "in your response. Images (.jpg, .png, .webp) are uploaded and displayed "
         "inline, audio files as voice messages, and other files as attachments."
     ),
+    "nextcloud_talk": (
+        "You are chatting via Nextcloud Talk. It supports a subset of markdown "
+        "formatting (bold, italic, code blocks, links). Keep messages under 4000 "
+        "characters. This is a self-hosted platform — the user values privacy "
+        "and data sovereignty. You may be part of a team room with other agents."
+    ),
     "weixin": (
         "You are on Weixin/WeChat. Markdown formatting is supported, so you may use it when "
         "it improves readability, but keep the message compact and chat-friendly. You can send media files natively: "

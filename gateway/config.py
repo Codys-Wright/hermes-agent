@@ -299,6 +299,7 @@ class Platform(Enum):
     WEIXIN = "weixin"
     BLUEBUBBLES = "bluebubbles"
     QQBOT = "qqbot"
+    NEXTCLOUD_TALK = "nextcloud_talk"
     YUANBAO = "yuanbao"
     RELAY = "relay"  # generic relay adapter fronted by the connector (EXPERIMENTAL)
     @classmethod
@@ -557,6 +558,7 @@ PLATFORM_TOKEN_ENV_NAMES: dict["Platform", str] = {
     Platform.MATTERMOST: "MATTERMOST_TOKEN",
     Platform.MATRIX: "MATRIX_ACCESS_TOKEN",
     Platform.WEIXIN: "WEIXIN_TOKEN",
+    Platform.NEXTCLOUD_TALK: "NEXTCLOUD_TALK_BOT_SECRET",
 }
 
 
@@ -808,6 +810,8 @@ _PLATFORM_CONNECTED_CHECKERS: dict[Platform, Callable[[PlatformConfig], bool]] =
     Platform.QQBOT: lambda cfg: bool(
         cfg.extra.get("app_id") and cfg.extra.get("client_secret")
     ),
+    # Nextcloud Talk: shared bot secret (+ base url checked at runtime).
+    Platform.NEXTCLOUD_TALK: lambda cfg: bool(cfg.extra.get("bot_secret")),
     Platform.YUANBAO: lambda cfg: bool(
         cfg.extra.get("app_id") and cfg.extra.get("app_secret")
     ),
@@ -1914,6 +1918,29 @@ def _apply_env_overrides(config: GatewayConfig) -> None:
             chat_id=mattermost_home,
             name=getenv("MATTERMOST_HOME_CHANNEL_NAME", "Home"),
             thread_id=getenv("MATTERMOST_HOME_CHANNEL_THREAD_ID") or None,
+        )
+
+    # Nextcloud Talk
+    nc_talk_url = os.getenv("NEXTCLOUD_TALK_URL")
+    nc_talk_secret = os.getenv("NEXTCLOUD_TALK_BOT_SECRET")
+    if nc_talk_url and nc_talk_secret:
+        if Platform.NEXTCLOUD_TALK not in config.platforms:
+            config.platforms[Platform.NEXTCLOUD_TALK] = PlatformConfig()
+        config.platforms[Platform.NEXTCLOUD_TALK].enabled = True
+        config.platforms[Platform.NEXTCLOUD_TALK].extra["url"] = nc_talk_url
+        config.platforms[Platform.NEXTCLOUD_TALK].extra["bot_secret"] = nc_talk_secret
+        config.platforms[Platform.NEXTCLOUD_TALK].extra["api_user"] = os.getenv("NEXTCLOUD_TALK_API_USER", "")
+        config.platforms[Platform.NEXTCLOUD_TALK].extra["api_password"] = os.getenv("NEXTCLOUD_TALK_API_PASSWORD", "")
+        config.platforms[Platform.NEXTCLOUD_TALK].extra["webhook_port"] = os.getenv("NEXTCLOUD_TALK_WEBHOOK_PORT", "")
+        config.platforms[Platform.NEXTCLOUD_TALK].extra["webhook_path"] = os.getenv("NEXTCLOUD_TALK_WEBHOOK_PATH", "")
+        config.platforms[Platform.NEXTCLOUD_TALK].extra["auto_team"] = os.getenv("NEXTCLOUD_TALK_AUTO_TEAM", "true")
+        config.platforms[Platform.NEXTCLOUD_TALK].extra["team_room_token"] = os.getenv("NEXTCLOUD_TALK_TEAM_ROOM", "")
+    nc_talk_home = os.getenv("NEXTCLOUD_TALK_HOME_CHANNEL")
+    if nc_talk_home and Platform.NEXTCLOUD_TALK in config.platforms:
+        config.platforms[Platform.NEXTCLOUD_TALK].home_channel = HomeChannel(
+            platform=Platform.NEXTCLOUD_TALK,
+            chat_id=nc_talk_home,
+            name=os.getenv("NEXTCLOUD_TALK_HOME_CHANNEL_NAME", "Home"),
         )
 
     # Matrix

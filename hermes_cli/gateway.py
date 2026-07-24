@@ -5083,6 +5083,41 @@ _PLATFORMS = [
     # dynamically via the platform registry entry registered by
     # plugins/platforms/whatsapp/adapter.py::register(). #41112.
     {
+        "key": "nextcloud_talk",
+        "label": "Nextcloud Talk",
+        "emoji": "☁️",
+        "token_var": "NEXTCLOUD_TALK_BOT_SECRET",
+        "setup_instructions": [
+            "1. In Nextcloud: Administration → Talk → Bot management → Add bot",
+            "   Set a name (e.g. Hermes) and note the shared secret",
+            "2. Configure the bot's webhook URL to point to your Hermes instance",
+            "   (default: http://your-server:8789/webhook/nc-talk)",
+            "3. For room management (auto-team creation), you also need an API user",
+            "   with Talk permissions — use an app password for security",
+        ],
+        "vars": [
+            {"name": "NEXTCLOUD_TALK_URL", "prompt": "Nextcloud server URL (e.g. https://cloud.example.com)", "password": False,
+             "help": "Your Nextcloud server URL."},
+            {"name": "NEXTCLOUD_TALK_BOT_SECRET", "prompt": "Bot shared secret (HMAC key)", "password": True,
+             "help": "The shared secret from your Talk bot registration."},
+            {"name": "NEXTCLOUD_TALK_API_USER", "prompt": "API username for room management (optional)", "password": False,
+             "help": "Nextcloud user for creating team rooms. Use an app password."},
+            {"name": "NEXTCLOUD_TALK_API_PASSWORD", "prompt": "API password (app password recommended)", "password": True,
+             "help": "Password for the API user above."},
+            {"name": "NEXTCLOUD_TALK_ALLOWED_USERS", "prompt": "Allowed user IDs (comma-separated)", "password": False,
+             "is_allowlist": True,
+             "help": "Nextcloud user IDs allowed to interact with the bot."},
+            {"name": "NEXTCLOUD_TALK_HOME_CHANNEL", "prompt": "Home room token (for cron/notifications, or empty to set later with /set-home)", "password": False,
+             "help": "Room token where Hermes delivers cron results and notifications."},
+        ],
+    },
+    {
+        "key": "whatsapp",
+        "label": "WhatsApp",
+        "emoji": "📲",
+        "token_var": "WHATSAPP_ENABLED",
+    },
+    {
         "key": "signal",
         "label": "Signal",
         "emoji": "📡",

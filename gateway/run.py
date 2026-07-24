@@ -9870,6 +9870,18 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                 return None
             return YuanbaoAdapter(config)
 
+        elif platform == Platform.NEXTCLOUD_TALK:
+            from gateway.platforms.nextcloud_talk import (
+                NextcloudTalkAdapter,
+                check_nextcloud_talk_requirements,
+            )
+            if not check_nextcloud_talk_requirements():
+                logger.warning(
+                    "Nextcloud Talk: aiohttp missing or URL/bot secret not configured"
+                )
+                return None
+            return NextcloudTalkAdapter(config)
+
         return None
 
     def _make_adapter_auth_check(
